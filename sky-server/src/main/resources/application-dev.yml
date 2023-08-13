@@ -7,8 +7,3 @@ sky:
     username: root
     password: luozheng
 
-  alioss:
-    endpoint: oss-cn-beijing.aliyuncs.com
-    access-key-id: LTAI5tHM4WxLsHmhLCbCBNbt
-    access-key-secret: QlqNIDFGkUVQOPjEhapTSMEByjnMnm
-    bucket-name: e-itcast
