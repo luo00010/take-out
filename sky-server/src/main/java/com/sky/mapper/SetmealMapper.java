@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.security.OAuthFlow;
 import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.Update;
 
 @Mapper
 public interface SetmealMapper {
@@ -49,4 +50,11 @@ public interface SetmealMapper {
      */
     @Delete("delete from setmeal where id = #{setmealId}")
     void deleteById(Long setmealId);
+
+    /**
+     * 修改套餐信息表
+     * @param setmeal
+     */
+
+    void update(Setmeal setmeal);
 }

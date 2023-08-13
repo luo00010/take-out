@@ -2,6 +2,7 @@ package com.sky.service.impl;
 
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
+import com.sky.annotation.AutoFill;
 import com.sky.constant.MessageConstant;
 import com.sky.constant.StatusConstant;
 import com.sky.controller.admin.SetmealController;
@@ -9,6 +10,7 @@ import com.sky.dto.SetmealDTO;
 import com.sky.dto.SetmealPageQueryDTO;
 import com.sky.entity.Setmeal;
 import com.sky.entity.SetmealDish;
+import com.sky.enumeration.OperationType;
 import com.sky.exception.DeletionNotAllowedException;
 import com.sky.mapper.SetmealDishMapper;
 import com.sky.mapper.SetmealMapper;
@@ -98,5 +100,54 @@ public class SetmealServiceImpl implements SetmealService {
             //删除套餐菜品关联表的数据
             setmealDishMapper.deletById(setmealId);
         }
+    }
+
+    /**
+     * 根据id查询套餐
+     * @param id
+     * @return
+     */
+    @Override
+    public SetmealVO getByid(Long id) {
+        //根据id查找套餐数据
+        Setmeal setmeal = setmealMapper.getById(id);
+
+        //根据套餐id查找套餐菜品关联数据
+        List<SetmealDish> setmealDishes = setmealDishMapper.getBySetmealId(id);
+
+        //组合
+        SetmealVO setmealVO = new SetmealVO();
+        BeanUtils.copyProperties(setmeal,setmealVO);
+        setmealVO.setSetmealDishes(setmealDishes);
+
+        return  setmealVO;
+    }
+
+    /**
+     * 修改套餐
+     * @param setmealDTO
+     */
+    @Transactional
+    @Override
+    @AutoFill(OperationType.UPDATE)
+    public void update(SetmealDTO setmealDTO) {
+        //修改套餐表
+        Setmeal setmeal = new Setmeal();
+        BeanUtils.copyProperties(setmealDTO,setmeal);
+        setmealMapper.update(setmeal);
+
+        //获取套餐id
+        Long id = setmeal.getId();
+
+        //修改套餐菜品关联表
+        //根据套餐id删除原本套餐菜品关联表信息
+        setmealDishMapper.deletById(id);
+
+        List<SetmealDish> setmealDishes = setmealDTO.getSetmealDishes();
+        for (SetmealDish setmealDish : setmealDishes) setmealDish.setSetmealId(id);
+
+        //插入套餐菜品表信息
+        setmealDishMapper.insertBatch(setmealDishes);
+
     }
 }
