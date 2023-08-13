@@ -7,6 +7,7 @@ import com.sky.entity.Setmeal;
 import com.sky.enumeration.OperationType;
 import com.sky.vo.SetmealVO;
 import io.swagger.v3.oas.annotations.security.OAuthFlow;
+import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 
@@ -34,4 +35,18 @@ public interface SetmealMapper {
      * @return
      */
     Page<SetmealVO> pageQuery(SetmealPageQueryDTO setmealPageQueryDTO);
+
+    /**
+     * 通过id查询套餐
+     * @param id
+     * @return
+     */
+    Setmeal getById(Long id);
+
+    /**
+     * 通过套餐id删除套餐
+     * @param setmealId
+     */
+    @Delete("delete from setmeal where id = #{setmealId}")
+    void deleteById(Long setmealId);
 }
