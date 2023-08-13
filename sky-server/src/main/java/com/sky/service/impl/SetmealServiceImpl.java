@@ -8,10 +8,13 @@ import com.sky.constant.StatusConstant;
 import com.sky.controller.admin.SetmealController;
 import com.sky.dto.SetmealDTO;
 import com.sky.dto.SetmealPageQueryDTO;
+import com.sky.entity.Dish;
 import com.sky.entity.Setmeal;
 import com.sky.entity.SetmealDish;
 import com.sky.enumeration.OperationType;
 import com.sky.exception.DeletionNotAllowedException;
+import com.sky.exception.SetmealEnableFailedException;
+import com.sky.mapper.DishMapper;
 import com.sky.mapper.SetmealDishMapper;
 import com.sky.mapper.SetmealMapper;
 import com.sky.result.PageResult;
@@ -32,6 +35,9 @@ public class SetmealServiceImpl implements SetmealService {
 
     @Autowired
     private SetmealDishMapper setmealDishMapper;
+
+    @Autowired
+    private DishMapper dishMapper;
 
 
 
@@ -149,5 +155,26 @@ public class SetmealServiceImpl implements SetmealService {
         //插入套餐菜品表信息
         setmealDishMapper.insertBatch(setmealDishes);
 
+    }
+
+    /**
+     * 套餐启售或停售
+     * @param status
+     * @param id
+     */
+    @Override
+    public void startOrStop(Integer status, Long id) {
+        //启售套餐时，查看套餐内是否有菜品停售
+        if (status == StatusConstant.ENABLE){
+            List<Dish> dishes = dishMapper.getByStatusId(id);
+            if (dishes!=null && dishes.size()>0){
+                for (Dish dish : dishes) if (dish.getStatus()==StatusConstant.DISABLE) throw new SetmealEnableFailedException(MessageConstant.SETMEAL_ENABLE_FAILED);
+            }
+        }
+        Setmeal setmeal = Setmeal.builder()
+                .id(id)
+                .status(status)
+                .build();
+        setmealMapper.update(setmeal);
     }
 }
