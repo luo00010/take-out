@@ -131,6 +131,7 @@ public class DishServiceImpl implements DishService {
      * 修改菜品基本信息和口味信息
      * @param dishDTO
      */
+    @Transactional
     @Override
     public void updateWithFlavor(DishDTO dishDTO) {
         Dish dish = new Dish();
@@ -153,5 +154,20 @@ public class DishServiceImpl implements DishService {
             //向口味表插入n条数据
             dishFlavorMapper.inserBath(flavors);
         }
+    }
+
+
+    /**
+     * 根据分类id查找菜品
+     * @param categoryId
+     * @return
+     */
+    @Override
+    public List<Dish> list(Long categoryId) {
+        Dish dish = Dish.builder()
+                .categoryId(categoryId)
+                .status(StatusConstant.ENABLE)
+                .build();
+        return dishMapper.list(dish);
     }
 }
