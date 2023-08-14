@@ -107,4 +107,19 @@ public class DishController {
         List<Dish> list = dishService.list(categoryId);
         return Result.success(list);
     }
+
+    /**
+     * 菜品的启售,停售
+     * @param status
+     * @param id
+     * @return
+     */
+    @PostMapping("/status/{status}")
+    @ApiOperation("菜品的启售,停售")
+    public Result status(@PathVariable Integer status,Long id){
+        dishService.status(status,id);
+        return Result.success();
+    }
+
+
 }
